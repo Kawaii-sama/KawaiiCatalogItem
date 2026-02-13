@@ -70,6 +70,12 @@ public class KawaiiCatalog {
 						 overridden to define our action
       */
      // SelectionAdapter is a SelectionListener which implements SelectionListener
+        /*
+         * This is called an anonymous inner class:
+         * anonymous → no name
+         * inner → written inside another call
+         * Nothing magical — just compact syntax 🌷
+         */
         printButton.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
@@ -93,5 +99,5 @@ public class KawaiiCatalog {
 
 	}
 
-
+// control + R
 }
