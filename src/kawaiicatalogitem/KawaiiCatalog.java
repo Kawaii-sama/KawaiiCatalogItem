@@ -58,6 +58,18 @@ public class KawaiiCatalog {
         printButton.setLayoutData(buttonData);
         
      // Button click handler
+     // SelectionListener -> SelecetionAdapter -> widgetSelected
+     /*
+      * SelectionListener → rule
+      						defines contract
+		SelectionAdapter → helper implementation
+						   provides empty defaults
+		addSelectionListener → registration step
+							   registers behaviour.
+		widgetSelected → callback executed by SWT
+						 overridden to define our action
+      */
+     // SelectionAdapter is a SelectionListener which implements SelectionListener
         printButton.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
