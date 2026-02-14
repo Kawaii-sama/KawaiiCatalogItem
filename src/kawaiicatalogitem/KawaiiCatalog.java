@@ -50,12 +50,29 @@ public class KawaiiCatalog {
          grabExcessVerticalSpace)
          */
         
+        
+        // anonymus object creation / inline construction
+        new Label (shell,SWT.NONE).setText("SKU:");
+        new Text(shell,SWT.BORDER).setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        
+
+        new Label (shell, SWT.NONE).setText("Quantity:");
+        Text quantityText = new Text (shell, SWT.BORDER);
+        quantityText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        quantityText.addVerifyListener(e-> {
+        	if (!e.text.matches("[0-9]*")) {
+        		e.doit = false;
+        	}
+        });
+        
+        /*
         Button printButton = new Button(shell, SWT.PUSH);
         printButton.setText("Print Product Name");
         
         GridData buttonData = new GridData(SWT.CENTER, SWT.CENTER, false, false);
         buttonData.horizontalSpan = 2;
         printButton.setLayoutData(buttonData);
+        */
         
      // Button click handler
      // SelectionListener -> SelecetionAdapter -> widgetSelected
@@ -76,12 +93,14 @@ public class KawaiiCatalog {
          * inner → written inside another call
          * Nothing magical — just compact syntax 🌷
          */
+        /*
         printButton.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 System.out.println(nameText.getText());
             }
         });
+        */
         
 
         shell.open();
