@@ -52,8 +52,12 @@ public class KawaiiCatalog {
         
         
         // anonymus object creation / inline construction
-        new Label (shell,SWT.NONE).setText("SKU:");
-        new Text(shell,SWT.BORDER).setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        //new Label (shell,SWT.NONE).setText("SKU:");
+        //new Text(shell,SWT.BORDER).setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        
+        new Label (shell, SWT.NONE).setText("SKU:");
+        Text skuText = new Text(shell, SWT.BORDER);
+        skuText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         
 
         new Label (shell, SWT.NONE).setText("Quantity:");
@@ -63,6 +67,18 @@ public class KawaiiCatalog {
         	if (!e.text.matches("[0-9]*")) {
         		e.doit = false;
         	}
+        });
+        
+        Button clearButton = new Button (shell, SWT.PUSH);
+        clearButton.setText("Clear");
+        clearButton.addSelectionListener(new SelectionAdapter() {
+        @Override
+        public void widgetSelected (SelectionEvent e) {
+        	nameText.setText("");
+        	skuText.setText("");
+        	quantityText.setText("");
+        }
+        
         });
         
         /*
