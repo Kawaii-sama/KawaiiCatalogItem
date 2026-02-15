@@ -24,7 +24,7 @@ public class KawaiiCatalog {
 		Display display = new Display();
         Shell shell = new Shell(display);
 
-        shell.setText("Kawaii Item Catalog");
+        shell.setText("🌸 Kawaii Item Catalog 🌸");
         shell.setSize(400, 300);
         
      // Layout for label + text field
