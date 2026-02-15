@@ -9,6 +9,8 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.jface.dialogs.MessageDialog;
+
 
 
 public class KawaiiCatalog {
@@ -81,6 +83,35 @@ public class KawaiiCatalog {
         
         });
         
+        Button saveButton = new Button(shell, SWT.PUSH);
+        saveButton.setText("Save");
+        saveButton.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+            	// .trim() used for trimming spaces
+                String productName = nameText.getText().trim();
+                String sku = skuText.getText().trim();
+                String quantity = quantityText.getText().trim();
+                
+                // short-circuit OR:
+                if (productName.isEmpty() || sku.isEmpty() || quantity.isEmpty()) {
+                    MessageDialog.openWarning(
+                        shell,
+                        "Missing Information",
+                        "Oops! looks like you forgot some details <3 🌸"
+                    );
+                    return; // button click handling stops immediately
+                }
+
+                // later: actual save logic
+                System.out.println("Saved:");
+                System.out.println("Name: " + productName);
+                System.out.println("SKU: " + sku);
+                System.out.println("Quantity: " + quantity);
+            }
+        });
+
+        
         /*
         Button printButton = new Button(shell, SWT.PUSH);
         printButton.setText("Print Product Name");
@@ -134,5 +165,4 @@ public class KawaiiCatalog {
 
 	}
 
-// control + R
 }
