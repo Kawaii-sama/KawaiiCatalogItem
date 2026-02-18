@@ -19,9 +19,14 @@ public class KawaiiCatalog {
 		// TODO Auto-generated method stub
 		
 		
-		
-		
+		/*
+	 🎀 Variables don’t store objects. They store references to objects.
+     🎀 The reference is what links your dialog to its real parent window.
+	 🎀 Display -> class data type
+	 🎀 Display -> reference variable
+		 */
 		Display display = new Display();
+		// object -> reference variable
         Shell shell = new Shell(display);
 
         shell.setText("🌸 Kawaii Item Catalog 🌸");
@@ -37,6 +42,7 @@ public class KawaiiCatalog {
      // nameLabel is reference variable
      // calling the constructor, which creates object
      // object is stored in reference variable   
+        // shell(argument -> as a reference) , here is used as an argument
         Label nameLabel = new Label(shell, SWT.NONE);
         nameLabel.setText("Product name:");
         
@@ -148,6 +154,31 @@ public class KawaiiCatalog {
             }
         });
         */
+        
+        Button searchButton = new Button (shell, SWT.PUSH);
+        searchButton.setText("Search");
+        // here listens opens up the dialog. so till its not open main window will handle everything.
+        // after it opens up control would go to dialog
+        searchButton.addSelectionListener(new SelectionAdapter () {
+        	@Override
+        	public void widgetSelected (SelectionEvent e) {
+        		CustomDialog dialog = new CustomDialog (shell);
+        		/*
+        		 * new CustomDialog(shell); is essentially:-
+        		 1. Allocate memory for CustomDialog
+				 2. Call Dialog(parentShell) ← this is super(parentShell)
+				 3. Set up dialog–parent relationship
+				 4. Then run your CustomDialog constructor body
+        		 */
+        		dialog.open();
+        		// post dialog logic
+        		String enteredSku = dialog.getSkuValue();
+        		if (enteredSku != null && !enteredSku.isEmpty()) {
+        			System.out.println("Using SKU later: " + enteredSku);
+        		}
+        	}
+        	
+        });
         
 
         shell.open();
