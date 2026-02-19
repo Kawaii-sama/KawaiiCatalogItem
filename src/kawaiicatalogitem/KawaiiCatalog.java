@@ -33,10 +33,10 @@ public class KawaiiCatalog {
         shell.setSize(400, 300);
         
      // Layout for label + text field
+     /*
+     GridLayout(int numColumns, boolean makeColumnsEqualWidth)
+     */
         shell.setLayout(new GridLayout(2, false));
-        /*
-         GridLayout(int numColumns, boolean makeColumnsEqualWidth)
-         */
         
      // Label
      // nameLabel is reference variable
