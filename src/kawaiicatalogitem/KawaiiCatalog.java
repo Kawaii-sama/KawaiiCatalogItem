@@ -1,5 +1,6 @@
 package kawaiicatalogitem;
 import org.eclipse.swt.SWT;
+
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.layout.GridLayout;
@@ -9,7 +10,9 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.window.Window;
 
 
 
@@ -179,6 +182,40 @@ public class KawaiiCatalog {
         	}
         	
         });
+        
+        Button editButton = new Button (shell, SWT.PUSH);
+        editButton.setText("Kawaii's Edit Button");
+        /*
+         * why do i need a listener for that?
+         * ah well babe, because its a button click!
+         */
+        editButton.addSelectionListener(new SelectionAdapter() {
+        	@Override
+        	// widgetSelected is for logic typing3 
+        	public void widgetSelected (SelectionEvent e) {
+        		String currentQunatity = quantityText.getText().trim();
+        		/*
+        		 * dialog here is responsible for:
+        		 * closing the main window
+        		 * gets the new value
+        		 * waits for ok/cancel
+        		 * gives the value it stores.
+        		 */
+        		InputDialog dialog = new InputDialog (
+        				shell,
+        				"Edit Qunatity",
+        				"Enter new quantity",
+        				currentQunatity,
+        				input -> input.matches("\\d+") ? null : "Only numbers allowed T^T"
+        					);
+        		
+        		if (dialog.open() == Window.OK) {
+        			String newQuantity = dialog.getValue();
+        			quantityText.setText(newQuantity);
+        		}
+        	}
+        });
+        
         
 
         shell.open();
