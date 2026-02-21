@@ -1,6 +1,9 @@
 package kawaiicatalogitem;
-import org.eclipse.swt.SWT;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.layout.GridLayout;
@@ -13,10 +16,22 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ColumnLabelProvider;
 
 
 
 public class KawaiiCatalog {
+	
+	static class CatalogItem {
+		String name; String sku; String quantity;
+		
+		CatalogItem (String name, String sku, String quantity) {
+			this.name = name; this.sku = sku; this.quantity = quantity;
+		}
+	}
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -40,6 +55,10 @@ public class KawaiiCatalog {
      GridLayout(int numColumns, boolean makeColumnsEqualWidth)
      */
         shell.setLayout(new GridLayout(2, false));
+        
+        
+        // In-memory list
+        List<CatalogItem> items = new ArrayList<>();
         
      // Label
      // nameLabel is reference variable
@@ -94,6 +113,30 @@ public class KawaiiCatalog {
         
         Button saveButton = new Button(shell, SWT.PUSH);
         saveButton.setText("Save");
+        
+        //Table viewer
+        TableViewer tableViewer = new TableViewer (shell,
+        		SWT.BORDER | SWT.FULL_SELECTION);
+        tableViewer.getTable().setHeaderVisible(true);
+        tableViewer.getTable().setLinesVisible(true);
+        
+        GridData tableData = new GridData (SWT.FILL, SWT.FILL, true, true);
+        tableData.horizontalSpan = 2;
+        tableViewer.getTable().setLayoutData(tableData);
+        
+        tableViewer.setContentProvider(ArrayContentProvider.getInstance());
+        
+        // Columns
+        createColumn (tableViewer, "Name", 200,
+        		item -> ((CatalogItem) item). name);
+        createColumn (tableViewer, "SKU", 150,
+                item -> ((CatalogItem) item).sku);
+        createColumn (tableViewer, "Quantity", 100,
+        		item -> ((CatalogItem) item). quantity);
+        		
+        tableViewer.setInput(items);
+        		
+        
         saveButton.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
@@ -111,6 +154,9 @@ public class KawaiiCatalog {
                     );
                     return; // button click handling stops immediately
                 }
+                
+                items.add(new CatalogItem (productName, sku, quantity));
+                tableViewer.refresh();
 
                 // later: actual save logic
                 System.out.println("Saved:");
@@ -191,16 +237,9 @@ public class KawaiiCatalog {
          */
         editButton.addSelectionListener(new SelectionAdapter() {
         	@Override
-        	// widgetSelected is for logic typing3 
+        	// widgetSelected is for logic typing 
         	public void widgetSelected (SelectionEvent e) {
         		String currentQunatity = quantityText.getText().trim();
-        		/*
-        		 * dialog here is responsible for:
-        		 * closing the main window
-        		 * gets the new value
-        		 * waits for ok/cancel
-        		 * gives the value it stores.
-        		 */
         		InputDialog dialog = new InputDialog (
         				shell,
         				"Edit Qunatity",
@@ -208,7 +247,15 @@ public class KawaiiCatalog {
         				currentQunatity,
         				input -> input.matches("\\d+") ? null : "Only numbers allowed T^T"
         					);
-        		
+        		// Only continue if the user confirmed the dialog.
+        		/*
+        		 * dialog.open() here is responsible for:
+        		 * closing the main window
+        		 * gets the new value
+        		 * waits for ok/cancel
+        		 * gives the value it stores.
+        		 */
+        		// agar iss sabh ka yeh matlabh hai toh syntax aisa kyun hia ??? T^T
         		if (dialog.open() == Window.OK) {
         			String newQuantity = dialog.getValue();
         			quantityText.setText(newQuantity);
@@ -232,5 +279,22 @@ public class KawaiiCatalog {
 
 
 	}
+	
+	
+	private static void createColumn (
+			TableViewer viewer, String title, int width,
+			java.util.function.Function <Object, String> mapper) {
+		TableViewerColumn column = new TableViewerColumn (viewer, SWT.NONE);
+		column.getColumn().setText(title); column.getColumn().setWidth(width);
+		
+		column.setLabelProvider(new ColumnLabelProvider () {
+			@Override
+			public String getText (Object element) {
+				return mapper.apply(element);
+			}
+		});
+	}
 
 }
+
+
