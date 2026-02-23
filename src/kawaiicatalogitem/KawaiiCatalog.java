@@ -25,9 +25,22 @@ import org.eclipse.jface.viewers.ColumnLabelProvider;
 
 public class KawaiiCatalog {
 	
+	/* for creating rows in table , i need a row object , can be created through class
+	 * static keyword:- standalone class, only need outer class context for structure
+	 * techincal name of below class is:- KawaiiCatalog.CatalogItem
+	 */
 	static class CatalogItem {
+		//instance variable (belong to object), empty boxes
 		String name; String sku; String quantity;
 		
+		/*Constructors parameters (temporary, only when constructors run)
+		 * this is the current object that is created
+		 * this.name = this + empty boxes (Field)
+		 * this.name = name means take the value passed in the constructor and store it in box
+		 * 
+		 * before constructor runs:- values stored in parameters, fields are empty
+		 * after constructors runs:- values are permanent in fiels, parameters disappearp
+		 */
 		CatalogItem (String name, String sku, String quantity) {
 			this.name = name; this.sku = sku; this.quantity = quantity;
 		}
@@ -44,9 +57,7 @@ public class KawaiiCatalog {
 	 🎀 Display -> reference variable
 		 */
 		Display display = new Display();
-		// object -> reference variable
         Shell shell = new Shell(display);
-
         shell.setText("🌸 Kawaii Item Catalog 🌸");
         shell.setSize(400, 300);
         
@@ -57,7 +68,10 @@ public class KawaiiCatalog {
         shell.setLayout(new GridLayout(2, false));
         
         
-        // In-memory list
+        /* In-memory list :- data lives in RAM
+         * List<CatalogItem> = A list that is ONLY allowed to store CatalogItem objects
+         * ArrayList<>(); = java's array lists are flexible
+         */
         List<CatalogItem> items = new ArrayList<>();
         
      // Label
@@ -115,25 +129,70 @@ public class KawaiiCatalog {
         saveButton.setText("Save");
         
         //Table viewer
-        TableViewer tableViewer = new TableViewer (shell,
-        		SWT.BORDER | SWT.FULL_SELECTION);
+        /*
+         * 🩷 Table viewer is a manager that:
+         * creates a table (SWT)
+         * connects data to rows
+         * keeps UI and data in sync
+         * | bitwise OR :- used for style flags
+         * FULL_SELECTION:- highlight the whole row when clicked
+         * getTable() :- gives access to created table
+         * setHeaderVisible(true):- show column headers (false would have falsed it)
+         * setLinesVisible(true):- this makes horizontal row lines visible. (false would false it)
+         */
+        TableViewer tableViewer = new TableViewer (shell, SWT.BORDER | SWT.FULL_SELECTION);
         tableViewer.getTable().setHeaderVisible(true);
         tableViewer.getTable().setLinesVisible(true);
         
+        /*
+         * GridData(horizontalAlignment, verticalAlignment, grabExcessHorizontalSpace, grabExcessVerticalSpace)
+         * FILL = how much space you use
+         */
         GridData tableData = new GridData (SWT.FILL, SWT.FILL, true, true);
+        // widget should occupy both columns (without it , table would take half column)
+        // horizontalSpan = how much space you are allowed
         tableData.horizontalSpan = 2;
         tableViewer.getTable().setLayoutData(tableData);
-        
+        /*
+         * ContentProvider:- Given this input, how would i get individual row elements
+         * Array content provider:- because we are using array list, creates one instance at a time
+         * getInstance:- Give me the reusable singleton instance.
+         */
         tableViewer.setContentProvider(ArrayContentProvider.getInstance());
         
         // Columns
+        /*
+         * tableViewer:- This column belongs to that table.
+         * "name":- the text shown at the top of the column.
+         * 200:- width in pixels.
+         * Instructions for columns
+         */
         createColumn (tableViewer, "Name", 200,
+        		/*
+        		 * why all this? Extract one specific value from the row object so the column can display it.
+        		 * object → viewed with correct type → value extracted. its like pov changes.
+        		 * item is the row object.
+        		 * We don’t change it — we just tell Java what type it really is,
+        		 * so we’re allowed to take the extract value we want from it,
+        		 * and return that value to the column to display.”
+        		 */
         		item -> ((CatalogItem) item). name);
         createColumn (tableViewer, "SKU", 150,
                 item -> ((CatalogItem) item).sku);
         createColumn (tableViewer, "Quantity", 100,
         		item -> ((CatalogItem) item). quantity);
-        		
+        
+        //“Hey TableViewer, here is the list of objects you should display as rows.”
+        // Handing over the entire list to the table.
+        /*
+         * after execution of below code line:-
+         * Loops through the list (quietly, internally).
+         * Treats each CatalogItem as one row.
+         * For each column:
+         * calls your lambda.
+         * extracts the correct value (name, sku, quantity).
+         * Displays everything on screen ✨.
+         */
         tableViewer.setInput(items);
         		
         
@@ -280,16 +339,39 @@ public class KawaiiCatalog {
 
 	}
 	
-	
+	/*
+	 * private:- only THIS class can use 
+	 * static because just a utility function.
+	 * TableViewer:- same ol table viewer
+	 * String:- column header text.
+	 * int width:- column width on screen.
+	 * Function:- take one row object input, return a String to display
+	 * creates one new column and attaches it to table viewer
+	 * Actual column generattion
+	 */
 	private static void createColumn (
 			TableViewer viewer, String title, int width,
 			java.util.function.Function <Object, String> mapper) {
 		TableViewerColumn column = new TableViewerColumn (viewer, SWT.NONE);
 		column.getColumn().setText(title); column.getColumn().setWidth(width);
 		
+		/*
+		 * below line gives column instruction
+		 */
 		column.setLabelProvider(new ColumnLabelProvider () {
 			@Override
+			/*
+			 * element = one row's object; yes again :D
+			 * It’s Object because the table doesn’t know the type.
+			 * below function renders but only when called
+			 */
 			public String getText (Object element) {
+				/*
+				 * Use the function we were given to extract the text from this row object.
+				 * element → row object
+				 * mapper → your lambda
+				 * result → string shown in column
+				 */
 				return mapper.apply(element);
 			}
 		});
