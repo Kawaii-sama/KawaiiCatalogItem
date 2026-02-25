@@ -139,8 +139,17 @@ public class KawaiiCatalog {
          * getTable() :- gives access to created table
          * setHeaderVisible(true):- show column headers (false would have falsed it)
          * setLinesVisible(true):- this makes horizontal row lines visible. (false would false it)
+         * Does it have borders?
+         * Can full rows be selected?
+         * Does it show row lines?
+         * Does it reserve space for column headers?
+         * Phase 3 sets up the table shell: how it looks, how it behaves, how much space it takes, and how it will later understand rows — but it does not create rows or columns yet.
          */
         TableViewer tableViewer = new TableViewer (shell, SWT.BORDER | SWT.FULL_SELECTION);
+        /* Hey Table, when column headers exist, please show the header bar.
+         * Headers belong to columns, But visibility belongs to the table
+         * Leave space at the top so column titles can appear later.
+         */
         tableViewer.getTable().setHeaderVisible(true);
         tableViewer.getTable().setLinesVisible(true);
         
@@ -162,12 +171,19 @@ public class KawaiiCatalog {
         
         // Columns
         /*
+         * Hey TableViewer, here is the list of objects you should display as rows.
+         * Handing over the entire list to the table.
          * tableViewer:- This column belongs to that table.
          * "name":- the text shown at the top of the column.
          * 200:- width in pixels.
          * Instructions for columns
+         * it’s just calling the function createColumn we are passing the arguments in that
+         * When I give you a list, treat each element as one row.
+         * This phase is NOT creating columns directly. 
+         * It is using a helper function that already knows how to do that.
+         * Which table? → tableViewer, What should the column look like?, How do I get the text for this column from a row?
          */
-        createColumn (tableViewer, "Name", 200,
+        createColumn (tableViewer, "Name", 200,  item -> ((CatalogItem) item). name);
         		/*
         		 * why all this? Extract one specific value from the row object so the column can display it.
         		 * object → viewed with correct type → value extracted. its like pov changes.
@@ -176,14 +192,11 @@ public class KawaiiCatalog {
         		 * so we’re allowed to take the extract value we want from it,
         		 * and return that value to the column to display.”
         		 */
-        		item -> ((CatalogItem) item). name);
         createColumn (tableViewer, "SKU", 150,
                 item -> ((CatalogItem) item).sku);
         createColumn (tableViewer, "Quantity", 100,
         		item -> ((CatalogItem) item). quantity);
         
-        //“Hey TableViewer, here is the list of objects you should display as rows.”
-        // Handing over the entire list to the table.
         /*
          * after execution of below code line:-
          * Loops through the list (quietly, internally).
@@ -192,6 +205,10 @@ public class KawaiiCatalog {
          * calls your lambda.
          * extracts the correct value (name, sku, quantity).
          * Displays everything on screen ✨.
+         * rows are created, list is read, looping over items, UI refresh (Clear old view, Paint new rows)
+         * setInput() uses the columns that already exist
+         * This connects data to the table. 
+         * The TableViewer reads the list, treats each CatalogItem as a row, asks each column how to extract text, and then paints everything on screen.
          */
         tableViewer.setInput(items);
         		
@@ -238,12 +255,9 @@ public class KawaiiCatalog {
      // Button click handler
      // SelectionListener -> SelecetionAdapter -> widgetSelected
      /*
-      * SelectionListener → rule
-      						defines contract
-		SelectionAdapter → helper implementation
-						   provides empty defaults
-		addSelectionListener → registration step
-							   registers behaviour.
+      * SelectionListener → rule defines contract
+		SelectionAdapter → helper implementation provides empty defaults
+		addSelectionListener → registration step registers behaviour.
 		widgetSelected → callback executed by SWT
 						 overridden to define our action
       */
@@ -340,6 +354,9 @@ public class KawaiiCatalog {
 	}
 	
 	/*
+	 * 
+	 * Below function defines how a column behaves. 
+	 * It does not create rows, print data, or trigger rendering — it only explains how to extract text from a row object when the TableViewer asks.
 	 * private:- only THIS class can use 
 	 * static because just a utility function.
 	 * TableViewer:- same ol table viewer
@@ -348,6 +365,10 @@ public class KawaiiCatalog {
 	 * Function:- take one row object input, return a String to display
 	 * creates one new column and attaches it to table viewer
 	 * Actual column generattion
+	 * only responsible for:- Teaching ONE column how to extract text from a row object.
+	 * createColumn(...):- Creates a column,Sets its title,Sets its width,Attaches instructions
+	 * tableViewer.setInput(items):- The TableViewer orchestrates everything: Rows come into existence (visually), Looping happens (internally), Each row object is passed to each column, getText(element) is called repeatedly
+	 * 
 	 */
 	private static void createColumn (
 			TableViewer viewer, String title, int width,
